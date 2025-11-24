@@ -1,6 +1,8 @@
 package com.example.plantslibrary.adapters.out.mongo.document;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
@@ -13,6 +15,8 @@ import java.util.List;
 @Getter
 @Setter
 @Document(collection = "plants")
+@NoArgsConstructor
+@AllArgsConstructor
 public class PlantDocument {
 
     @Id
