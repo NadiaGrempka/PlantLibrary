@@ -11,33 +11,40 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+/**
+ * MongoDB adapter implementing {@link PlantRepositoryPort} using
+ * Spring Data {@link SpringDataPlantRepository}.
+ */
 @Repository
-    public class PlantRepositoryAdapter implements PlantRepositoryPort {
+public class PlantRepositoryAdapter implements PlantRepositoryPort {
 
-        private final SpringDataPlantRepository springDataPlantRepository;
+    private final SpringDataPlantRepository springDataPlantRepository;
 
-        public PlantRepositoryAdapter(SpringDataPlantRepository springDataPlantRepository) {
-            this.springDataPlantRepository = springDataPlantRepository;
-        }
+    /**
+     * @param springDataPlantRepository Spring Data repository for {@link PlantDocument}
+     */
+    public PlantRepositoryAdapter(SpringDataPlantRepository springDataPlantRepository) {
+        this.springDataPlantRepository = springDataPlantRepository;
+    }
 
-        @Override
-        public Plant save(Plant plant) {
-            PlantDocument doc = toDocument(plant);
-            PlantDocument saved = springDataPlantRepository.save(doc);
-            return toDomain(saved);
-        }
+    @Override
+    public Plant save(Plant plant) {
+        PlantDocument doc = toDocument(plant);
+        PlantDocument saved = springDataPlantRepository.save(doc);
+        return toDomain(saved);
+    }
 
-        @Override
-        public Optional<Plant> findById(String id) {
-            return springDataPlantRepository.findById(id).map(this::toDomain);
-        }
+    @Override
+    public Optional<Plant> findById(String id) {
+        return springDataPlantRepository.findById(id).map(this::toDomain);
+    }
 
-        @Override
-        public List<Plant> findAll() {
-            return springDataPlantRepository.findAll().stream()
-                    .map(this::toDomain)
-                    .collect(Collectors.toList());
-        }
+    @Override
+    public List<Plant> findAll() {
+        return springDataPlantRepository.findAll().stream()
+                .map(this::toDomain)
+                .collect(Collectors.toList());
+    }
 
     @Override
     public List<Plant> findByRoomId(String roomId) {
@@ -47,9 +54,9 @@ import java.util.stream.Collectors;
     }
 
     @Override
-        public void deleteById(String id) {
-            springDataPlantRepository.deleteById(id);
-        }
+    public void deleteById(String id) {
+        springDataPlantRepository.deleteById(id);
+    }
 
     @Override
     public List<PlantNameView> findNamesByRoomId(String roomId) {
@@ -58,41 +65,47 @@ import java.util.stream.Collectors;
 
     // mapowanie
 
-        private PlantDocument toDocument(Plant plant) {
-            PlantDocument doc = new PlantDocument();
-            doc.setId(plant.getId());
-            doc.setName(plant.getName());
-            doc.setHydrationLevel(plant.getHydrationLevel());
-            doc.setHumidityLevel(plant.getHumidityLevel());
-            doc.setSunlightLevel(plant.getSunlightLevel().name());
-            doc.setFertilizerNeeded(plant.isFertilizerNeeded());
-            doc.setCurrentTemperature(plant.getCurrentTemperature());
-            doc.setTemperatureComfort(
-                    plant.getTemperatureComfort() != null
-                            ? plant.getTemperatureComfort().name()
-                            : null
+    /**
+     * Maps domain {@link Plant} to Mongo {@link PlantDocument}.
+     */
+    private PlantDocument toDocument(Plant plant) {
+        PlantDocument doc = new PlantDocument();
+        doc.setId(plant.getId());
+        doc.setName(plant.getName());
+        doc.setHydrationLevel(plant.getHydrationLevel());
+        doc.setHumidityLevel(plant.getHumidityLevel());
+        doc.setSunlightLevel(plant.getSunlightLevel().name());
+        doc.setFertilizerNeeded(plant.isFertilizerNeeded());
+        doc.setCurrentTemperature(plant.getCurrentTemperature());
+        doc.setTemperatureComfort(
+                plant.getTemperatureComfort() != null
+                        ? plant.getTemperatureComfort().name()
+                        : null
+        );
+        doc.setRoomId(plant.getRoomId());
+        return doc;
+    }
+
+    /**
+     * Maps Mongo {@link PlantDocument} to domain {@link Plant}.
+     */
+    private Plant toDomain(PlantDocument doc) {
+        Plant plant = new Plant();
+        plant.setId(doc.getId());
+        plant.setName(doc.getName());
+        plant.setHydrationLevel(doc.getHydrationLevel());
+        plant.setHumidityLevel(doc.getHumidityLevel());
+        plant.setSunlightLevel(SunlightLevel.valueOf(doc.getSunlightLevel()));
+        plant.setFertilizerNeeded(doc.getFertilizerNeeded());
+        plant.setCurrentTemperature(doc.getCurrentTemperature());
+
+        if (doc.getTemperatureComfort() != null) {
+            plant.setTemperatureComfort(
+                    TemperatureComfort.valueOf(doc.getTemperatureComfort())
             );
-            doc.setRoomId(plant.getRoomId());
-            return doc;
         }
 
-        private Plant toDomain(PlantDocument doc) {
-            Plant plant = new Plant();
-            plant.setId(doc.getId());
-            plant.setName(doc.getName());
-            plant.setHydrationLevel(doc.getHydrationLevel());
-            plant.setHumidityLevel(doc.getHumidityLevel());
-            plant.setSunlightLevel(SunlightLevel.valueOf(doc.getSunlightLevel()));
-            plant.setFertilizerNeeded(doc.getFertilizerNeeded());
-            plant.setCurrentTemperature(doc.getCurrentTemperature());
-
-            if (doc.getTemperatureComfort() != null) {
-                plant.setTemperatureComfort(
-                        TemperatureComfort.valueOf(doc.getTemperatureComfort())
-                );
-            }
-
-            plant.setRoomId(doc.getRoomId());
-            return plant;
-        }
+        plant.setRoomId(doc.getRoomId());
+        return plant;
+    }
 }

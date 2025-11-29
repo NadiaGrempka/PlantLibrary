@@ -1,0 +1,76 @@
+scalar DateTime
+
+enum SunlightLevel {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+enum TemperatureComfort {
+  TOO_COLD
+  OK
+  TOO_HOT
+}
+
+enum CareStatus {
+  PLANNED
+  DONE
+  CANCELLED
+}
+
+type Plant {
+  id: ID!
+  name: String!
+  hydrationLevel: Int!
+  humidityLevel: Int!
+  sunlightLevel: SunlightLevel!
+  fertilizerNeeded: Boolean!
+  currentTemperature: Float
+  temperatureComfort: TemperatureComfort
+  roomId: ID
+}
+
+type CareEvent {
+  id: ID!
+  plantId: ID!
+  plant: Plant
+  userId: ID
+  scheduledAt: DateTime!
+  completedAt: DateTime
+  status: CareStatus!
+  note: String
+}
+
+input PlantFilter {
+  roomId: ID
+  sunlightLevel: SunlightLevel
+  nameContains: String
+}
+
+type Query {
+  plants(filter: PlantFilter, limit: Int, offset: Int, sort: String): [Plant!]!
+  plant(id: ID!): Plant
+
+  careEvents(status: CareStatus, plantId: ID): [CareEvent!]!
+}
+
+input CreateCareEventInput {
+  plantId: ID!
+  userId: ID
+  scheduledAt: DateTime!
+  note: String
+}
+
+input UpdateCareEventInput {
+  id: ID!
+  scheduledAt: DateTime
+  completedAt: DateTime
+  status: CareStatus
+  note: String
+}
+
+type Mutation {
+  createCareEvent(input: CreateCareEventInput!): CareEvent!
+  updateCareEvent(input: UpdateCareEventInput!): CareEvent!
+  cancelCareEvent(id: ID!): CareEvent!
+}

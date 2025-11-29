@@ -21,6 +21,11 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * REST controller exposing CRUD operations for {@link Plant} resources.
+ * <p>
+ * All endpoints are prefixed with {@code /api/plants}.
+ */
 @RestController
 @RequestMapping("/api/plants")
 public class PlantController {
@@ -29,6 +34,14 @@ public class PlantController {
     private final UpdatePlantConditionsUsePort updatePlantConditionsUsePort;
     private final SpringDataPlantRepository springDataPlantRepository;
 
+    /**
+     * Creates new instance of {@link PlantController}.
+     *
+     * @param createPlantUsePort           use case for creating plants
+     * @param getPlantsQueryUsePort       use case for reading plants
+     * @param updatePlantConditionsUsePort use case for updating plant conditions
+     * @param springDataPlantRepository   Spring Data repository used for paging queries
+     */
     public PlantController(CreatePlantUsePort createPlantUsePort,
                            GetPlantsQueryUsePort getPlantsQueryUsePort,
                            UpdatePlantConditionsUsePort updatePlantConditionsUsePort, SpringDataPlantRepository springDataPlantRepository) {
@@ -38,6 +51,12 @@ public class PlantController {
         this.springDataPlantRepository = springDataPlantRepository;
     }
 
+    /**
+     * Creates a new plant.
+     *
+     * @param request validated payload with plant data
+     * @return 201 Created with created {@link PlantResponse}
+     */
     @PostMapping
     public ResponseEntity<PlantResponse> create(@Valid @RequestBody PlantCreateRequest request) {
         Plant plant = createPlantUsePort.createPlant(PlantWebMapper.toCommand(request));
@@ -46,7 +65,16 @@ public class PlantController {
                 .body(PlantWebMapper.toResponse(plant));
     }
 
+
     //Todo
+    /**
+     * Returns paginated list of plants, optionally filtered by room.
+     *
+     * @param roomId   optional room identifier used to filter plants;
+     *                 when {@code null} all plants are returned
+     * @param pageable pagination and sorting configuration
+     * @return page of {@link PlantResponse} objects
+     */
     @GetMapping
     public ResponseEntity<Page<PlantResponse>> getAll(
             @RequestParam(required = false) String roomId,
@@ -68,6 +96,12 @@ public class PlantController {
     }
 
 
+    /**
+     * Returns a single plant by id.
+     *
+     * @param id plant identifier
+     * @return 200 OK with {@link PlantResponse}
+     */
     @GetMapping("/{id}")
     public ResponseEntity<PlantResponse> getById(@PathVariable String id) {
         Plant plant = getPlantsQueryUsePort
@@ -77,7 +111,13 @@ public class PlantController {
     }
 
 
-
+    /**
+     * Partially updates plant conditions.
+     *
+     * @param id      plant identifier
+     * @param request payload with new conditions
+     * @return 200 OK with updated {@link PlantResponse}
+     */
     @PutMapping("/{id}")
     public ResponseEntity<PlantResponse> updateConditions(
             @PathVariable String id,
@@ -95,6 +135,12 @@ public class PlantController {
         return ResponseEntity.ok(PlantWebMapper.toResponse(updated));
     }
 
+    /**
+     * Deletes plant by identifier.
+     *
+     * @param id plant identifier
+     * @return 204 No Content when deletion succeeds
+     */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable String id) {
         getPlantsQueryUsePort.getById(id);
@@ -102,6 +148,12 @@ public class PlantController {
         return ResponseEntity.noContent().build();
     }
 
+    /**
+     * Returns lightweight list of plant names for a given room.
+     *
+     * @param roomId identifier of the room
+     * @return list of id + name projections
+     */
     @GetMapping("/names")
     public List<PlantNameDto> getPlantNamesByRoom(@RequestParam String roomId) {
         return springDataPlantRepository.findNamesByRoomId(roomId).stream()

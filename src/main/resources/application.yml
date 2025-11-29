@@ -1,9 +1,11 @@
 spring:
+  graphql:
+    graphiql:
+      enabled: true
   data:
     mongodb:
       # Connection string z parametrami poola
-      uri: mongodb://localhost:27017/plants-library?maxPoolSize=50&minPoolSize=5&maxIdleTimeMS=60000
-      database: plants-library
+      uri: mongodb://localhost:27017/plants-library
       auto-index-creation: true  # tworzenie indeksów z adnotacji @Indexed
 
   # Twarde timeouty (przykładowe wartości)
