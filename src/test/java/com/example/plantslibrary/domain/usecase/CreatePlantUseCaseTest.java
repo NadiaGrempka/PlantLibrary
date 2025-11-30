@@ -33,7 +33,7 @@ class CreatePlantUseCaseTest {
                         50,
                         "LOW",
                         false,
-                        10.0,          // < 15 -> TOO_COLD
+                        10.0,
                         "room-1"
                 );
 

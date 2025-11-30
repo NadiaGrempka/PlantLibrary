@@ -31,7 +31,9 @@ public class CareEventRepositoryAdapter implements CareEventRepositoryPort {
 
     @Override
     public List<CareEvent> findAll() {
-        return List.of();
+        return repository.findAll().stream()
+                .map(this::toDomain)
+                .collect(Collectors.toList());
     }
 
     @Override

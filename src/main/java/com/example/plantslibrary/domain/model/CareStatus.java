@@ -7,5 +7,7 @@ public enum CareStatus {
     PLANNED,
     DONE,
     CANCELLED,
-    SCHEDULED
+    SCHEDULED,
+    WATERING,
+    FERTILIZING
 }

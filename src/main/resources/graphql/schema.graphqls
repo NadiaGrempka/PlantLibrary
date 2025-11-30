@@ -1,21 +1,11 @@
 scalar DateTime
 
-enum SunlightLevel {
-  LOW
-  MEDIUM
-  HIGH
-}
-
-enum TemperatureComfort {
-  TOO_COLD
-  OK
-  TOO_HOT
-}
-
 enum CareStatus {
-  PLANNED
-  DONE
+  SCHEDULED
+  COMPLETED
   CANCELLED
+  WATERING
+  FERTILIZING
 }
 
 type Plant {
@@ -23,40 +13,31 @@ type Plant {
   name: String!
   hydrationLevel: Int!
   humidityLevel: Int!
-  sunlightLevel: SunlightLevel!
+  sunlightLevel: String!
   fertilizerNeeded: Boolean!
-  currentTemperature: Float
-  temperatureComfort: TemperatureComfort
-  roomId: ID
+  currentTemperature: Float!
+  roomId: String
+  temperatureComfort: String!
 }
 
 type CareEvent {
   id: ID!
   plantId: ID!
-  plant: Plant
-  userId: ID
+  userId: String!
   scheduledAt: DateTime!
   completedAt: DateTime
   status: CareStatus!
   note: String
-}
-
-input PlantFilter {
-  roomId: ID
-  sunlightLevel: SunlightLevel
-  nameContains: String
+  plant: Plant
 }
 
 type Query {
-  plants(filter: PlantFilter, limit: Int, offset: Int, sort: String): [Plant!]!
-  plant(id: ID!): Plant
-
   careEvents(status: CareStatus, plantId: ID): [CareEvent!]!
 }
 
 input CreateCareEventInput {
   plantId: ID!
-  userId: ID
+  userId: String!
   scheduledAt: DateTime!
   note: String
 }
