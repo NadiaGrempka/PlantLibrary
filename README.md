@@ -69,6 +69,8 @@ docker run -d --name plants-mongo \
 
 docker compose up -d mongo
 
+---
+
 ### Configuration
 
 Application is configured via application.yml.
@@ -89,6 +91,8 @@ max-connection-idle-time: 60000
 server:
 port: 8080
 
+---
+
 ### Building and Running the Application
 
 Clone the repository and build the project:
@@ -102,6 +106,8 @@ Run the application:
 mvn spring-boot:run
 
 The app will start on: http://localhost:8080
+
+---
 
 ### REST API
 Plants
@@ -207,6 +213,10 @@ Response:
 { "id": "456", "name": "Ficus" }
 ]
 
+
+---
+
+
 ### Tests and Code Coverage
 
 To run all tests:
@@ -217,6 +227,8 @@ mvn clean test
 To run tests and generate JaCoCo coverage report:
 
 mvn clean test jacoco:report
+
+---
 
 ### Error Handling
 
@@ -248,6 +260,8 @@ Docker must be running locally.
 Example command:
 
 mvn test -DskipUnitTests=false
+
+---
 
 ### License
 Project created for educational purposes.
