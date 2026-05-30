@@ -222,23 +222,23 @@ mvn clean test jacoco:report
 
 The API uses a global @ControllerAdvice with custom error responses:
 
-400 Bad Request – validation errors
+- 400 Bad Request – validation errors
 
-404 Not Found – resource not found (PlantNotFoundException, etc.)
+- 404 Not Found – resource not found (PlantNotFoundException, etc.)
 
-500 Internal Server Error – unexpected server errors
+- 500 Internal Server Error – unexpected server errors
 
 Each error response contains:
 
-timestamp
+- timestamp
 
-status
+- status
 
-errorCode
+- errorCode
 
-message
+- message
 
-path
+- path
 
 Running Integration Tests with Testcontainers
 
